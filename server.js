@@ -1,11 +1,14 @@
 
 const express = require('express');
 
+const db = require('./data/db.js')
+
 const server = express();
 
 server.use(express.json()); // teaches express to parse JSON body
-let titleId = 0;
-let textId = 0;
+
+let postId = 1;
+let textId = 1;
 
 // sanity check endpoint
 server.get('/', (req, res) => {
@@ -14,14 +17,17 @@ server.get('/', (req, res) => {
 
 
 server.post('/api/posts', (req, res) => {
-    const title = req.body;
-  
+    const post =  req.body;
+console.log('post req.body',req.body)
     // add the new id
-     title.id = titleId++;
-    titles.push(title);
-  
-    // return correct http status code for operation
-    res.status(201).json(titles);
+    //  post.id = Number(postId) + 1;
+    db.insert(post)
+    .then(response => {
+        res.status(201).json(response);
+    })
+    .catch(error => {
+        res.status(500).json({ message: 'error adding to list of titles'})
+    })
   });
 
   server.post('/api/posts/:id/comments', (req, res) => {
@@ -37,16 +43,25 @@ server.post('/api/posts', (req, res) => {
 
 
   server.get('/api/posts', (req, res) => {
-    res.send(req);
+    db.find()
+   .then(response => {
+      res.status(200).json(response);
+  })
+  .catch(error => {
+      res.status(500).json({ message: 'error getting list of titles'})
+  })
+  });
 
-  res.status(200).json(req);
-});
-
-server.get('/api/posts/:id', (req, res) => {
-    res.send(req);
-
-  res.status(200).json(req);
-});
+  server.get('/api/posts/:id', (req, res) => {
+    db.findById()
+   .then(response => {
+      res.status(200).json(response);
+  })
+  .catch(error => {
+      res.status(500).json({ message: 'error getting list of titles'})
+  })
+  });
+    
 
 server.get('/api/posts/:id/comments', (req, res) => {
     res.send(req);
@@ -57,23 +72,23 @@ server.get('/api/posts/:id/comments', (req, res) => {
 server.delete('/api/posts/:id', (req, res) => {
     const id = req.params.id;
   
-    titles = titles.filter(t => t.id !== Number(id));
+    posts = posts.filter(t => t.id !== Number(id));
   
-    res.status(200).json(titles);
+    res.status(200).json(posts);
   });
-let newTitles = []
-function getTitles(item,ix,arr,id,res) {
+let newposts = []
+function getposts(item,ix,arr,id,res) {
 if (arr[ix].id === id)
-{newTitles.push(res)}
+{newposts.push(res)}
 else
-{newTitles.push(item)}
+{newposts.push(item)}
 }
 
   server.put('/api/posts/:id', (req, res) => {
     const id = req.params.id;
- titles.map(getTitles)
-    titles = newTitles
-    res.status(200).json(titles);
+ posts.map(getposts)
+    posts = newposts
+    res.status(200).json(posts);
   });
     
 
