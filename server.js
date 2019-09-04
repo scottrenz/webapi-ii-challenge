@@ -117,22 +117,24 @@ server.delete('/api/posts/:id', (req, res) => {
         res.status(500).json({ message: 'error deleting title'})
     })
     });
-    
-  let newposts = []
-function getposts(item,ix,arr,id,res) {
-if (arr[ix].id === id)
-{newposts.push(res)}
-else
-{newposts.push(item)}
-}
 
-  server.put('/api/posts/:id', (req, res) => {
-    const id = req.params.id;
- posts.map(getposts)
-    posts = newposts
-    res.status(200).json(posts);
-  });
-    
+    server.put('/api/posts/:id', (req, res) => {
+        const post =  req.body;
+        console.log('put by id req.url',req.url)
+        console.log('put by id req.body',req.body)
+        // paragraph.lastIndexOf(searchTerm) str.substring(2)
+        const id = req.url.substring(req.url.lastIndexOf(":")+1)
+        console.log('put by id req id',id)
+      db.update(id, post)
+     .then(response => {
+        post.id = id
+        res.status(200).json(post);
+    })
+    .catch(error => {
+        res.status(500).json({ message: 'error updating title'})
+    })
+    });
+        
 
 // export default server; // ES2015 modules
 // module.exports = { server }; // CommonJS modules (node)
