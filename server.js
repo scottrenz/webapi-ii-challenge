@@ -14,7 +14,30 @@ server.get('/', (req, res) => {
 });
 
 
-server.post('/api/posts', (req, res) => {
+// server.post('/api/posts/:id/comments', (req, res) => {
+//     const post =  req.body;
+//     console.log('post comment req.url',req.url)
+//     console.log('post comment req.body',req.body)
+   
+//   });
+
+  server.post('/api/posts/:id/comments', (req, res) => {
+    const post =  req.body;
+    console.log('post comment req.url',req.url)
+    console.log('post comment req.body',req.body)
+    // add the new id
+    //  post.id = Number(postId) + 1;
+    db.insertComment(post)
+    .then(response => {
+        res.status(201).json(response);
+    })
+    .catch(error => {
+        res.status(500).json({ message: 'error adding to list of titles'})
+    })
+  });
+
+
+  server.post('/api/posts', (req, res) => {
     const post =  req.body;
 console.log('post req.body',req.body)
     // add the new id
@@ -28,32 +51,34 @@ console.log('post req.body',req.body)
     })
   });
 
-  server.post('/api/posts/:id/comments', (req, res) => {
-    const text = req.body;
-  
-    // add the new id
-    text.id = textId++;
-    texts.push(text);
-  
-    // return correct http status code for operation
-    res.status(201).json(texts);
-  });
 
+  server.get('/api/posts/:id/comments', (req, res) => {
+    console.log('by id req comments',req.url)
+    // paragraph.lastIndexOf(searchTerm) str.substring(2)
+    const id = req.url.replace('/comments/','').replace('/comments','').substring(req.url.lastIndexOf(":")+1)
+    console.log('by id req id comments',id)
+    db.findPostComments(id)
+ .then(response => {
+    res.status(200).json(response);
+})
+.catch(error => {
+    res.status(500).json({ message: 'error getting list of comments'})
+})
+});
 
-
-  server.get('/api/posts/:id', (req, res) => {
-      console.log('by id req',req.url)
-      // paragraph.lastIndexOf(searchTerm) str.substring(2)
-      const id = req.url.substring(req.url.lastIndexOf(":")+1)
-      console.log('by id req id',id)
-    db.findById(id)
-   .then(response => {
-      res.status(200).json(response);
-  })
-  .catch(error => {
-      res.status(500).json({ message: 'error getting list of titles'})
-  })
-  });
+server.get('/api/posts/:id', (req, res) => {
+    console.log('by id req',req.url)
+    // paragraph.lastIndexOf(searchTerm) str.substring(2)
+    const id = req.url.substring(req.url.lastIndexOf(":")+1)
+    console.log('by id req id',id)
+  db.findById(id)
+ .then(response => {
+    res.status(200).json(response);
+})
+.catch(error => {
+    res.status(500).json({ message: 'error getting title'})
+})
+});
 
   server.get('/api/posts', (req, res) => {
        console.log('not by id req',req.body)
