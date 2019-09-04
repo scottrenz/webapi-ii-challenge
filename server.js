@@ -25,8 +25,6 @@ server.get('/', (req, res) => {
     const post =  req.body;
     console.log('post comment req.url',req.url)
     console.log('post comment req.body',req.body)
-    // add the new id
-    //  post.id = Number(postId) + 1;
     db.insertComment(post)
     .then(response => {
         res.status(201).json(response);
@@ -40,16 +38,20 @@ server.get('/', (req, res) => {
   server.post('/api/posts', (req, res) => {
     const post =  req.body;
 console.log('post req.body',req.body)
-    // add the new id
-    //  post.id = Number(postId) + 1;
-    db.insert(post)
+if(!(post.title && post.contents))
+{
+    res.status(400).json({errorMessage: "Please provide title and contents for the post." })
+}
+else
+{
+db.insert(post)
     .then(response => {
         res.status(201).json(response);
     })
     .catch(error => {
         res.status(500).json({ message: 'error adding to list of titles'})
     })
-  });
+  }});
 
 
   server.get('/api/posts/:id/comments', (req, res) => {
