@@ -98,13 +98,27 @@ server.get('/api/posts/:id/comments', (req, res) => {
 });
 
 server.delete('/api/posts/:id', (req, res) => {
-    const id = req.params.id;
-  
-    posts = posts.filter(t => t.id !== Number(id));
-  
-    res.status(200).json(posts);
-  });
-let newposts = []
+        console.log('by id req',req.url)
+        // paragraph.lastIndexOf(searchTerm) str.substring(2)
+        const id = req.url.substring(req.url.lastIndexOf(":")+1)
+        console.log('by id req id',id)
+      db.findById(id)
+     .then(response => {
+        db.remove(id)
+        .then(result => {
+            console.log('deleted title '+id)
+          res.status(200).json(response);
+        })
+        .catch(error => {
+            res.status(500).json({ message: 'error deleting title'})
+        })
+        })
+    .catch(error => {
+        res.status(500).json({ message: 'error deleting title'})
+    })
+    });
+    
+  let newposts = []
 function getposts(item,ix,arr,id,res) {
 if (arr[ix].id === id)
 {newposts.push(res)}
