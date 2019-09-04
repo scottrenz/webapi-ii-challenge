@@ -40,8 +40,13 @@ console.log('post req.body',req.body)
   });
 
 
-  server.get('/api/posts', (req, res) => {
-    db.find()
+
+  server.get('/api/posts/:id', (req, res) => {
+      console.log('by id req',req.url)
+      // paragraph.lastIndexOf(searchTerm) str.substring(2)
+      const id = req.url.substring(req.url.lastIndexOf(":")+1)
+      console.log('by id req id',id)
+    db.findById(id)
    .then(response => {
       res.status(200).json(response);
   })
@@ -50,16 +55,16 @@ console.log('post req.body',req.body)
   })
   });
 
-  server.get('/api/posts/:id', (req, res) => {
-    db.findById()
+  server.get('/api/posts', (req, res) => {
+       console.log('not by id req',req.body)
+    db.find()
    .then(response => {
       res.status(200).json(response);
   })
   .catch(error => {
       res.status(500).json({ message: 'error getting list of titles'})
   })
-  });
-    
+  });    
 
 server.get('/api/posts/:id/comments', (req, res) => {
     res.send(req);
