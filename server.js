@@ -7,8 +7,6 @@ const server = express();
 
 server.use(express.json()); // teaches express to parse JSON body
 
-let postId = 1;
-let textId = 1;
 
 // sanity check endpoint
 server.get('/', (req, res) => {
